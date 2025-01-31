@@ -2,16 +2,10 @@
 // Incluir el archivo de conexión
 include('conexion.php');
 
-
 // Verificar si los datos fueron enviados por el formulario
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Obtener los datos del formulario
-
-    
-    if (isset($_POST['id']))
     $id = $_POST['id'];
-   
- 
     $nombre = $_POST['nombre'];
     $apellidos = $_POST['apellidos'];
     $fecha_nacimiento = $_POST['fecha_nacimiento'];
@@ -29,7 +23,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Si se proporciona una nueva contraseña, encriptarla
     if (!empty($contrasena)) {
         $contrasena = password_hash($contrasena, PASSWORD_DEFAULT);
-        
     } else {
         // Si no se cambia la contraseña, mantener la anterior
         // Consultar la contraseña actual
@@ -42,24 +35,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($result->num_rows > 0) {
                 $usuario = $result->fetch_assoc();
                 $contrasena = $usuario['contrasena'];  // Mantener la contraseña anterior
-               
             }
             $stmt->close();
-
         }
-    
-       
     }
-    $contrasena2 = $contrasena;
+
     // Preparar la sentencia SQL para actualizar los datos
-    $sql = "UPDATE usuarios SET nombre=?, apellidos=?, fecha_nacimiento=?, correo=?, telefono=?, contrasena=?, contrasena2=? WHERE Id=?";
+    $sql = "UPDATE usuarios SET nombre=?, apellidos=?, fecha_nacimiento=?, correo=?, telefono=?, contrasena=? WHERE id=?";
     if ($stmt = $conn->prepare($sql)) {
         // Vincular los parámetros
-        $stmt->bind_param("sssssssi", $nombre, $apellidos, $fecha_nacimiento, $correo, $telefono, $contrasena, $contrasena2, $id);
+        $stmt->bind_param("ssssssi", $nombre, $apellidos, $fecha_nacimiento, $correo, $telefono, $contrasena, $id);
 
         // Ejecutar la consulta
         if ($stmt->execute()) {
-            echo "Usuario actualizado exitosamente." ;
+            echo "Usuario actualizado exitosamente.";
         } else {
             echo "Error al actualizar el usuario: " . $stmt->error;
         }
