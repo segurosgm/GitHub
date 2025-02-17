@@ -37,6 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Numero_Identidad'])) 
 
     $conn->close();
 
+
+
 ?>
 
 
@@ -97,10 +99,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Numero_Identidad'])) 
 </head>
 
 <body>
+
+
     <header class="container-fluid">
         <div class="container flex justify-between">
-            <center><img class="img-fluid" src="img/logo2.jpg" alt="logo GMK Seguros Especialistas en Riesgos y 
-            Seguros"></center>
+            <center><img class="img-fluid" src="../img/logo2.jpg" alt="logo"></center>
             <!-- class="img-fluid" es el responsive desde boostrap -->
         </div>
         <nav class="container">
@@ -114,10 +117,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Numero_Identidad'])) 
                     <div class="collapse navbar-collapse" id="navbarNavDropdown">
                         <ul class="navbar-nav">
                             <li class="nav-item">
-                                <a class="nav-link " aria-current="page" href=""></a>
+                                <a class="nav-link" aria-current="page" href="../home.html">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" href=""></a>
+                                <a class="nav-link active" href="../cuenta.html">Cuenta</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -125,9 +128,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Numero_Identidad'])) 
                                     Consultar Seguros
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="">Transporte</a></li>
-                                    <li><a class="dropdown-item" href="">Vida</a></li>
-
+                                    <li><a class="dropdown-item" href="../transporte.html">Transporte</a></li>
+                                    <li><a class="dropdown-item" href="../vida.html">Vida</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
@@ -136,11 +138,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Numero_Identidad'])) 
                                     Conctacto
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="">Acerca de Nosotros</a></li>
-                                    <li><a class="dropdown-item" href="">Servicios</a></li>
-                                    <li><a class="dropdown-item" href="">Aliados</a></li>
-                                    <li><a class="dropdown-item" href="correo.html">Contactanos</a></li>
+                                    <li><a class="dropdown-item" href="../nosotros.html">Acerca de Nosotros</a></li>
+                                    <li><a class="dropdown-item" href="../servicios.html">Servicios</a></li>
+                                    <li><a class="dropdown-item" href="../aliados.html">Aliados</a></li>
+                                    <li><a class="dropdown-item" href="../correo.html">Contactanos</a></li>
                                 </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../index.html">Salir</a>
                             </li>
                         </ul>
                     </div>
@@ -148,6 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Numero_Identidad'])) 
             </nav>
         </nav>
     </header>
+
     <main>
         <article>
             <center>
@@ -176,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Numero_Identidad'])) 
 
                             <?php if ($usuario): ?>
                                 
-                                <form method="POST" action="actualizar_usuario.php">
+                                <form method="POST" action="actualizarUsuario.php">
                                     <br><br>
                                     <div>
                                         <?php echo "<p><strong>Numero Identidad: </strong>" . $usuario['Numero_Identidad'] . "</p>"; ?>
@@ -210,12 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Numero_Identidad'])) 
                                         <input type="text" id="telefono" name="telefono"
                                             value="<?php echo $usuario['Telefono'] ?? ''; ?>" ><br><br>
                                         
-                                        <label for="contrasena">Contraseña:</label>
-                                        <input type="password" id="contrasena" name="contrasena"
-                                            value="<?php echo $usuario['Contrasena'] ?? ''; ?>" ><br><br>
-                                        <label for="confirmar_contrasena">Confirmar contraseña:</label>
-                                        <input type="password" id="contrasena2" name="contrasena2"
-                                            value="<?php echo $usuario['Contrasena2'] ?? ''; ?>" ><br><br>
+                                        
 
 
                                         <br><br>

@@ -140,28 +140,29 @@ function validarFormulario() {
 }
 
 
-
-
-// Función para habilitar o deshabilitar los campos según el tipo de seguro
 function toggleVehiculoFields() {
     var tipoSeguro = document.getElementById("Id_tipoPoliza").value; // Obtener el tipo de seguro seleccionado
     var tipoVehiculoDiv = document.getElementById("TipoVehiculo"); // Contenedor del tipo de vehículo
     var placaDiv = document.getElementById("Placa"); // Contenedor de la matrícula vehículo
-    var marca = document.getElementById("Marca"); 
+    var marcaDiv = document.getElementById("Marca"); // Contenedor de la marca del vehículo
+
+    // Revisar el valor seleccionado
+    console.log("Valor seleccionado: " + tipoSeguro); // Esto te ayudará a depurar
 
     // Si el tipo de seguro es "Transporte", habilitamos los campos de vehículo
     if (tipoSeguro === "Transporte") {
         tipoVehiculoDiv.style.display = "block"; // Muestra el contenedor del tipo de vehículo
         placaDiv.style.display = "block"; // Muestra el contenedor de matrícula vehículo
-        marca.style.display = "block";
-
+        marcaDiv.style.display = "block"; // Muestra el contenedor de marca del vehículo
     } else {
         tipoVehiculoDiv.style.display = "none"; // Oculta el contenedor del tipo de vehículo
         placaDiv.style.display = "none"; // Oculta el contenedor de matrícula vehículo
-        marca.style.display = "none;"
-        
+        marcaDiv.style.display = "none"; // Oculta el contenedor de marca del vehículo
     }
 }
+
+
+
 
 // Aquí puedes agregar validaciones antes de enviar el formulario
 document.querySelector('form').addEventListener('submit', function(event) {

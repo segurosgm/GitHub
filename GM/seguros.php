@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,12 +24,8 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js"></script>
     <script src="js/script.js"></script>
-
-
-
-
-
     
+
 </head>
 
 <body>
@@ -94,85 +91,127 @@
                     <br><br>
                     <section action="" class="flex justify-between border border-dark ">
                         <br><br>
-                        <form id="registroSeguro" action="modelo/registroSeguro.php" method="POST">
-                            <div class="form-group">
-                                <div>
-                                    <label for="">Nombre Aseguradora:</label>
-                                    <select name="Nombre_Aseguradora" id="Nombre_Aseguradora" required>
-                                        <!--<option value="">Seleccionar Aseguradora</option>  -->
-                                        <option value="" disabled selected>Seleccionar Aseguradora</option>
-                                      <!-- Aseguradoras serán cargadas por java -->
-                                    </select>
-                                </div>
-                               <br><br>
-                                <div class="flex justify-between">
-                                    <label for="telefono">
-                                        Numero de Teléfono:
-                                    </label>
-                                    <input type="text" id="telefono">
-                                </div>
-                                <br><br>
-                                <div class="form-group">
-                                    <label for="tipo_seguro">Tipo de Seguro:</label>
-                                    <select name="tipo_seguro" id="tipo_seguro" required
-                                        onchange="toggleVehiculoFields()">
-                                        <option value="" disabled selected>Seleccionar</option>
-                                        <option value="Transporte">Transporte</option>
-                                        <option value="Vida">Vida</option>
-                                    </select>
-                                </div>
-                                <br>
-                                <div class="flex justify-between">
-                                    <label for="poliza">
-                                        Numero Poliza:
-                                    </label>
-                                    <input type="text" id="num_poliza">
-                                </div>
-                                <br>
-                                <div class="flex justify-between">
-                                    <label>
-                                        Fecha Vencimiento:
-                                    </label>
-                                    <input class="datepicker  col-auto" id="fecha_vencimiento" readonly
-                                        placeholder="Mes/Dia/Año">
-                                </div>
-                                <br>
-                                <div class="flex justify-between">
-                                    <label for="identificacion">
-                                        Identificación Registrada:
-                                    </label>
-                                    <input type="text" id="cedula">
-                                </div>
-                                <br><br>
-
-                                <!-- Contenedor del Tipo de Vehículo (Inicialmente oculto) -->
-                                <div class="form-group" id="tipo_vehiculo_div" style="display: none;">
-                                    <label for="tipo_Vehiculo">Tipo de Vehículo:</label>
-                                    <select name="tipo_Vehiculo" id="tipo_Vehiculo" required>
-                                        <option value="" disabled selected>Seleccionar</option>
-                                        <option value="Automovil">Automovil</option>
-                                        <option value="Moto">Motocicleta</option>
-                                    </select>
-                                </div>
-
-                                <!-- Contenedor de Matrícula Vehículo (Inicialmente oculto) -->
-                                <div class="form-group" id="placa_div" style="display: none;">
-                                    <label for="placa">Matrícula Vehículo:</label>
-                                    <input type="text" id="placa" name="placa" required>
-                                </div>
+                        <form id="registroSeguro" method="POST" action="agregar.php" onsubmit="">
 
 
-                                <!-- Contenedor de Marca Vehículo (Inicialmente oculto) -->
-                                <div class="form-group" id="marca" style="display: none;">
-                                    <label for="marca">Marca:</label>
-                                    <input type="text" id="marca" name="marca" required>
-                                </div>
+                            <?php
 
 
+                            // Conectar a la base de datos
+                            $conn = new mysqli("localhost", "root", "", "gmk");
 
+                            // Comprobar la conexión
+                            if ($conn->connect_error) {
+                                die("Conexión fallida: " . $conn->connect_error);
+                            }
+                            ?>
+                            <div>
+                                <label for="Nombre_Aseguradora">Nombre Aseguradora:</label>
+                                <select name="Nombre_Aseguradora" id="Nombre_Aseguradora" required>
+                                    <!--<option value="">Seleccionar Aseguradora</option>  -->
+                                    <option value="" disabled selected>Seleccionar Aseguradora</option>
+                                    <!-- Aseguradoras serán cargadas por java -->
+
+                                    <?php
+                                    // Mostrar las aseguradoras obtenidas de la base de datos
+                                    //include("/modelo/conexion.php");
+                                    
+
+                                    // Consultar las aseguradoras
+                                    $sql = "SELECT * FROM aseguradoras";
+                                    $result = $conn->query($sql);
+
+                                    // Llenar la lista desplegable con las aseguradoras
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_assoc()) {
+                                            echo "<option value='" . $row['Id_Aseguradora'] . "'>" . $row['Nombre_Aseguradora'] . "</option>";
+                                        }
+                                    } else {
+                                        echo "<option value=''>No hay aseguradoras disponibles</option>";
+                                    }
+
+                                    // Cerrar la conexión
+                                    $conn->close();
+
+                                    ?>
+
+
+                                </select>
                             </div>
+                            <br><br>
+                            <label for="nombre">Nombres:</label>
+                            <input type="text" id="nombre" name="nombre" required><br><br>
+                            <label for="apellidos">Apellidos:</label>
+                            <input type="text" id="apellidos" name="apellidos" required><br><br>
+                            <!-- Campo de Tipo de Documento -->
+                            <label for="tipo_documento">Tipo de Documento:</label>
+                            <select class="" aria-label="Default select example" name="tipo_documento"
+                                id="tipo_documento" required>
+                                <option selected disabled>Seleccione</option>
+                                <option value="cedula">CC</option>
+                                <option value="cedula_Extranjeria">CE</option>
+                                <option value="tarjet_identidad">TI</option>
+                                <option value="registro_civil">RC</option>
+                                <option value="documento_nacional_identidad">DNI</option>
+                            </select><br><br>
+                           <!-- Campo de Número de Identidad -->
+                            <label for="numero_identidad">Número de Identidad:</label>
+                            <input type="text" id="numero_identidad" name="numero_identidad" required><br><br>
+                            
+                            <div class="form-group">
+                            <div class="flex justify-between">
+                                <label for="poliza">
+                                    Numero Poliza:
+                                </label>
+                                <input type="text" id="num_poliza" name="num_poliza">
+                            </div>
+                            <br>
+                            <div class="flex justify-between">
+                                <label>
+                                    Fecha Vencimiento:
+                                </label>
+                                <input class="datepicker  col-auto" id="fecha_vencimiento" name="fecha_vencimiento" readonly
+                                    placeholder="Mes/Dia/Año">
+                            </div>
+                            <br>
+
+
+
+  <!-- Formulario con el campo de selección -->
+  <form>
+        <label for="Id_tipoPoliza">Tipo de seguro:</label>
+        <select id="Id_tipoPoliza" name="tipoPoliza" onchange="toggleVehiculoFields()">
+            <option value="">Seleccionar</option>
+            <option value="Transporte">Transporte</option>
+            <option value="Otro">Vida</option>
+        </select><br>
+
+        <!-- Contenedores que se mostrarán u ocultarán -->
+        <br><div id="TipoVehiculo" style="display: none;">
+            <label for="tipoVehiculo">Tipo de vehículo:</label>
+            <input type="text" id="tipoVehiculo" name="tipoVehiculo">
+        </div><br>
+
+        <div id="Placa" style="display: none;">
+            <label for="placa">Matrícula del vehículo:</label>
+            <input type="text" id="placa" name="placa">
+        </div><br>
+
+        <div id="Marca" style="display: none;">
+            <label for="marca">Marca del vehículo:</label>
+            <input type="text" id="marca" name="marca">
+        </div>
+    </form>
+
+  
+
+
+     
+
                             <div class="flex justify-between  space-x-2 mt-4">
-                                <a href="" class="boton" role="button" style="margin: 20px">Registrar</a>
+
+                                <input type="submit" class="boton" value="Registrar" role="button" style="margin: 20px">
+
                                 <a href="seguros.html" class="boton" role="button"
                                     style="margin-left: 20px">Modificar</a>
                             </div>
@@ -211,11 +250,17 @@
     </script>
 
 
+
+
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+
+
+
 </body>
 
 </html>

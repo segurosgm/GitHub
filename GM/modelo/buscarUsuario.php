@@ -128,7 +128,7 @@
 
 
                         <br><br>
-                        <div><a href="modelo/actualizarUsuario.php" class="boton" role="button">Modificar</a>
+                        <div><a href="modelo/modificarUser.php" class="boton" role="button">Modificar</a>
                         </div>
                         <br><br>
                         <div><a href="registrarSeg.html" type="submit" class="boton" role="button">Registro Seguros</a>
