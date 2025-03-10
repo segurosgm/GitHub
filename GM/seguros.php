@@ -1,3 +1,128 @@
+<?php
+// Conexión a la base de datos
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "GMK"; // Aquí deberías colocar el nombre de tu base de datos
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Verificar si la conexión fue exitosa
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Recibir los datos del formulario
+    $nombreAseguradora = $_POST['nombreAseguradora'];
+    $nombre = $_POST['nombre'];
+    $apellidos = $_POST['apellidos'];
+    $tipoDocumento = $_POST['tipoDocumento'];
+    $numeroIdentidad = $_POST['numeroIdentidad'];
+    $poliza = $_POST['Numero_Poliza'];
+   
+    $fechaVencimiento = $_POST['fechaVencimiento'];
+    $tipoPoliza = $_POST['tipoPoliza'];
+    $tipoVehiculo = $_POST['tipoVehiculo'];
+    $placa = $_POST['placa'];
+    $marca = $_POST['marca'];
+
+    // Verificar la aseguradora 
+
+$asgsql = "SELECT Id_Aseguradora FROM aseguradoras WHERE Nombre_Aseguradora = '$nombreAseguradora'";
+$resulasgsql =$conn->query($asgsql);
+
+
+if ($resulasgsql->num_rows > 0) {
+    $rowAseguradora = $resulasgsql->fetch_assoc();
+    $idAseguradora = $rowAseguradora['Id_Aseguradora'];
+
+}
+   // Verificar la tiposeguro
+   $tpsql = "SELECT Id_tipoPoliza  FROM tipopoliza WHERE NombrePoliza = '$tipoPoliza'";
+   $resultpsql =$conn->query($tpsql);
+   
+   
+   if ($resultpsql->num_rows > 0) {
+       $rowtpz = $resultpsql->fetch_assoc();
+       $idtipoPoliza = $rowtpz['Id_tipoPoliza'];
+   
+   }
+
+
+    // Verificar si el usuario ya existe en la tabla usuario
+    $sql = "SELECT * FROM usuarios WHERE Numero_Identidad = '$numeroIdentidad'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        // Si el usuario ya existe, solo agregar la información a las otras tablas
+        
+        // Insertar en la tabla vehiculo
+        $sqlVehiculo = "INSERT INTO vehiculo (Placa, TipoVehiculo, Marca) 
+                        VALUES ('$placa', '$tipoVehiculo', '$marca')";
+        $conn->query($sqlVehiculo);
+        
+        // Obtener el Id del Vehículo insertado
+        $idVehiculo = $conn->insert_id;
+
+        // Insertar en la tabla poliza
+        $sqlPoliza = "INSERT INTO poliza (Numero_Poliza,  Id_Aseguradora, Id_tipoPoliza, Fecha_Inicio, Fecha_Final) 
+                      VALUES ('$poliza',  '$idAseguradora', '$idtipoPoliza', NOW(), '$fechaVencimiento')";
+        $conn->query($sqlPoliza);
+        
+        // Obtener el Id de la Póliza insertada
+        $idPoliza = $conn->insert_id;
+
+        // Insertar en la tabla segurovehiculo
+        $sqlSeguroVehiculo = "INSERT INTO segurovehiculo (Id_Aseguradora, Id_Vehiculo, Id_Poliza, Estado) 
+                              VALUES ('$idAseguradora', '$idVehiculo', '$idPoliza', 'Activo')";
+        $conn->query($sqlSeguroVehiculo);
+        
+    } else {
+        // Si el usuario no existe, insertar en la tabla usuario y las demás tablas
+
+        // Insertar en la tabla usuario
+        $sqlUsuario = "INSERT INTO usuario (Numero_Identidad, Nombre, Apellidos, Tipo_Documento) 
+                       VALUES ('$numeroIdentidad', '$nombre', '$apellidos', '$tipoDocumento')";
+        $conn->query($sqlUsuario);
+
+        // Obtener el Id del Usuario insertado
+        $idUsuario = $conn->insert_id;
+
+        // Insertar en la tabla vehiculo
+        $sqlVehiculo = "INSERT INTO vehiculo (Placa, TipoVehiculo, Marca) 
+                        VALUES ('$placa', '$tipoVehiculo', '$marca')";
+        $conn->query($sqlVehiculo);
+
+        // Obtener el Id del Vehículo insertado
+        $idVehiculo = $conn->insert_id;
+
+        // Insertar en la tabla poliza
+        $sqlPoliza = "INSERT INTO poliza (Numero_Poliza, Id_tipoPoliza, Id_Aseguradora, Fecha_Inicio, Fecha_Final) 
+                      VALUES ('$poliza', '$tipoPoliza', '$idAseguradora', NOW(), '$fechaVencimiento')";
+        $conn->query($sqlPoliza);
+
+        // Obtener el Id de la Póliza insertada
+        $idPoliza = $conn->insert_id;
+
+        // Insertar en la tabla segurovida
+        $sqlSeguroVida = "INSERT INTO segurovida (Id_Aseguradora, Id_Usuario, Id_Poliza, Estado) 
+                          VALUES ('$idAseguradora', '$idUsuario', '$idPoliza', 'Activo')";
+        $conn->query($sqlSeguroVida);
+
+        // Insertar en la tabla segurovehiculo
+        $sqlSeguroVehiculo = "INSERT INTO segurovehiculo (Id_Aseguradora, Id_Vehiculo, Id_Poliza, Estado) 
+                              VALUES ('$idAseguradora', '$idVehiculo', '$idPoliza', 'Activo')";
+        $conn->query($sqlSeguroVehiculo);
+    }
+
+    // Mensaje de éxito
+    echo "Datos ingresados correctamente.";
+}
+
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
