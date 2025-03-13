@@ -12,43 +12,46 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Recibir los datos del formulario
-    $nombreAseguradora = $_POST['nombreAseguradora'];
+    $nombreAseguradora = $_POST['Nombre_Aseguradora'];
     $nombre = $_POST['nombre'];
     $apellidos = $_POST['apellidos'];
-    $tipoDocumento = $_POST['tipoDocumento'];
-    $numeroIdentidad = $_POST['numeroIdentidad'];
-    $poliza = $_POST['Numero_Poliza'];
-   
-    $fechaVencimiento = $_POST['fechaVencimiento'];
+    $tipoDocumento = $_POST['tipo_documento'];
+    $numeroIdentidad = $_POST['numero_identidad'];
+    $poliza = $_POST['num_poliza'];
+    $fechaVencimiento = $_POST['fecha_vencimiento'];  
     $tipoPoliza = $_POST['tipoPoliza'];
     $tipoVehiculo = $_POST['tipoVehiculo'];
     $placa = $_POST['placa'];
     $marca = $_POST['marca'];
 
+    $idAseguradora = isset($_POST['Id_Aseguradora']) ? $_POST['Id_Aseguradora'] : null;
+    $idtipoPoliza = isset($_POST['Id_tipoPoliza']) ? $_POST['Id_tipoPoliza'] : null;
+
+    
     // Verificar la aseguradora 
 
-$asgsql = "SELECT Id_Aseguradora FROM aseguradoras WHERE Nombre_Aseguradora = '$nombreAseguradora'";
-$resulasgsql =$conn->query($asgsql);
+$asg = "SELECT Id_Aseguradora FROM aseguradoras WHERE Nombre_Aseguradora = '$nombreAseguradora'";
+$resulasg =$conn->query($asg);
 
 
-if ($resulasgsql->num_rows > 0) {
-    $rowAseguradora = $resulasgsql->fetch_assoc();
+if ($resulasg->num_rows > 0) {
+    $rowAseguradora = $resulasg->fetch_assoc();
     $idAseguradora = $rowAseguradora['Id_Aseguradora'];
 
 }
    // Verificar la tiposeguro
-   $tpsql = "SELECT Id_tipoPoliza  FROM tipopoliza WHERE NombrePoliza = '$tipoPoliza'";
-   $resultpsql =$conn->query($tpsql);
+   $tp = "SELECT Id_tipoPoliza  FROM tipopoliza WHERE NombrePoliza = '$tipoPoliza'";
+   $resultp =$conn->query($tp);
    
    
-   if ($resultpsql->num_rows > 0) {
-       $rowtpz = $resultpsql->fetch_assoc();
-       $idtipoPoliza = $rowtpz['Id_tipoPoliza'];
+   if ($resultp->num_rows > 0) {
+       $tp = $resultp->fetch_assoc();
+       $idtipoPoliza = $tp['Id_tipoPoliza'];
    
    }
-
 
     // Verificar si el usuario ya existe en la tabla usuario
     $sql = "SELECT * FROM usuarios WHERE Numero_Identidad = '$numeroIdentidad'";
@@ -99,7 +102,7 @@ if ($resulasgsql->num_rows > 0) {
 
         // Insertar en la tabla poliza
         $sqlPoliza = "INSERT INTO poliza (Numero_Poliza, Id_tipoPoliza, Id_Aseguradora, Fecha_Inicio, Fecha_Final) 
-                      VALUES ('$poliza', '$tipoPoliza', '$idAseguradora', NOW(), '$fechaVencimiento')";
+                      VALUES ('$poliza', '$idtipoPoliza', '$idAseguradora', NOW(), '$fechaVencimiento')";
         $conn->query($sqlPoliza);
 
         // Obtener el Id de la Póliza insertada
@@ -216,7 +219,7 @@ $conn->close();
                     <br><br>
                     <section action="" class="flex justify-between border border-dark ">
                         <br><br>
-                        <form id="registroSeguro" method="POST" action="agregar.php" onsubmit="">
+                        <form id="registroSeguro" method="POST" action="" onsubmit="">
 
 
                             <?php
