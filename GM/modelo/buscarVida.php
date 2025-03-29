@@ -84,7 +84,7 @@
             <center>
                 <section class="container flex justify-between">
                     <h2>
-                        Información Seguro del Vehiculo 
+                        Información Seguro Vida 
                     </h2>
                     <br>
                     <section class=" flex justify-between border border-dark ">
@@ -96,25 +96,27 @@
                        
                  
                         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                            // Obtener la placa desde el formulario
-                            $placa = $conn->real_escape_string($_POST['Placa']);
+                            // Obtener Id desde el formulario
+                            $Nombre = $conn->real_escape_string($_POST['Nombre']);
+                            $Apellidos = $conn->real_escape_string($_POST['Apellidos']);
                         
-                            // Consultar la base de datos para obtener la información del vehículo
-                            $sql = "SELECT Id_Vehiculo FROM vehiculo WHERE Placa = ?";
+                            // Consultar la base de datos para obtener la información del usuario
+                            $sql = "SELECT Id FROM usuarios WHERE Nombre = ? AND Apellidos = ? ";
                             $stmt = $conn->prepare($sql);
-                            $stmt->bind_param("s", $placa); // "s" indica string
+                            $stmt->bind_param("ss", $nombre,$Apellidos); // "s" indica string
                             $stmt->execute();
                             $result = $stmt->get_result();
                         
                             if ($result->num_rows > 0) {
-                                // Obtener el ID del vehículo
+                                // Obtener el ID del nombre
                                 $row = $result->fetch_assoc();
-                                $idplaca = $row['Id_Vehiculo'];
+                                $id = $row['Id'];
+
                         
-                                // Obtener la aseguradora del vehículo
-                                $sql = "SELECT Id_Aseguradora, Id_Poliza FROM segurovehiculo WHERE Id_Vehiculo = ?";
+                                // Obtener la aseguradora del usuario
+                                $sql = "SELECT Id_Aseguradora, Id_Poliza FROM segurovida WHERE Id_Usuario = Id";
                                 $stmt = $conn->prepare($sql);
-                                $stmt->bind_param("i", $idplaca);
+                                $stmt->bind_param("i", $id);
                                 $stmt->execute();
                                 $result = $stmt->get_result();
                         
@@ -138,7 +140,7 @@
                                     }
                         
                                     // Obtener datos de la póliza
-                                    $sql = "SELECT Numero_Poliza, Fecha_Final FROM Poliza WHERE Id_Poliza = ?";
+                                    $sql = "SELECT Numero_Poliza, Fecha_Final FROM Poliza WHERE Id_Usuario = ?";
                                     $stmt = $conn->prepare($sql);
                                     $stmt->bind_param("i", $idpol);
                                     $stmt->execute();
@@ -152,31 +154,16 @@
                                     }
                         
                                     // Mostrar los resultados
-                                    echo "<p><strong>Placa:</strong> " . htmlspecialchars($placa) . "</p>";
+                                    echo "<p><strong>Placa:</strong> " . htmlspecialchars($Nombre) . "</p>";
                                     echo "<p><strong>Aseguradora:</strong> " . htmlspecialchars($nomAseg) . "</p>";
                                     echo "<p><strong>Teléfono Emergencia:</strong> " . htmlspecialchars($telefonoEmergencia) . "</p>";
                                     echo "<p><strong>Número de Póliza:</strong> " . htmlspecialchars($numpol) . "</p>";
                                     echo "<p><strong>Fecha de Vencimiento:</strong> " . htmlspecialchars($FechaFinal) . "</p>";
                                 } else {
-                                    echo "<h2><strong>No se encontró información de seguro para esta placa</strong></h2>";
+                                    echo "<h2><strong>No se encontró información de seguro para este Nombre</strong></h2>";
                                 }
-                            } else {
-                                
-
-                                   // Si no se encuentra el usuario, mostrar un mensaje
-                                   echo '  <script>
-                                   Swal.fire({
-                                       icon: "error",
-                                       title: "Oops...",
-                                       text: "No se encontró PLACA",
-                                       confirmButtonText: "Aceptar"
-                                       }).then(() => {
-                                           window.location.href = "/GM/cuenta.html"; 
-                                      
-                                        });
-                                   </script>';
+                       
                             }
-                        
                             // Cerrar la conexión a la base de datos
                             $stmt->close();
                             $conn->close();
@@ -185,16 +172,16 @@
                         
                         ?>    <br><br>
  <!-- Formulario de búsqueda  -->
- <form action="buscarTransporte.html" method="POST">
+ <form action="buscarvida.html" method="POST">
        
-        <button type="submit" class="boton" role="button">Nueva Conosulta</button> <br><br>
+        <button type="submit" class="boton" role="button">Nueva Consulta</button> <br>
     </form>
 
                     
                        
                     
 
-                        <br><br>
+                      
                         <br><br>
                     </section>
             </center>
