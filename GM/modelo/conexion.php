@@ -5,9 +5,16 @@ $password = "";
 $dbname = "gmk";
 
 // Crear conexión
-$conn = new mysqli(hostname: $servername, username: $username, password: $password, database: $dbname);
+$conn = new mysqli( $servername,  $username,  $password,  $dbname);
 
 // Comprobar conexión
+if ($conn->connect_error) {
+    die("Conexión fallida: " . $conn->connect_error);
+}
+
+
+
+$conn = new mysqli("localhost", "root", "", "gmk");
 if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }

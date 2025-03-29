@@ -25,8 +25,6 @@
     <base href="/Github/GM/">
 </head>
 
-
-
 <body>
     <header class="container-fluid">
         <div class="container flex justify-between">
@@ -48,7 +46,7 @@
                                 <a class="nav-link " aria-current="page" href="home.html">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" href="cuenta.html">Cuenta</a>
+                                <a class="nav-link " href="cuenta.html">Cuenta</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -56,7 +54,7 @@
                                     Consultar Seguros
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="transporte.html">Transporte</a></li>
+                                    <li><a class="dropdown-item" href="buscarTransporte.html">Transporte</a></li>
                                     <li><a class="dropdown-item" href="vida.html">Vida</a></li>
                                 </ul>
                             </li>
@@ -83,7 +81,7 @@
             <center>
                 <section class="container flex justify-between">
                     <h2>
-                        Información del Usuario
+                        Información Seguro del Vehiculo 
                     </h2>
                     <br>
                     <section class=" flex justify-between border border-dark ">
@@ -92,49 +90,95 @@
                         // Configuración para la conexión a la base de datos
                         include("conexion.php");
 
-
-
+                       
+                 
                         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                            // Obtener el número de identidad desde el formulario
-                            $numero_identidad = $conn->real_escape_string(string: $_POST['numero_identidad']);
-
-                            // Consultar la base de datos para obtener la información del usuario
-                            $sql = "SELECT * FROM usuarios WHERE numero_identidad = '$numero_identidad'";
-                            $result = $conn->query(query: $sql);
-
+                            // Obtener la placa desde el formulario
+                            $placa = $conn->real_escape_string($_POST['Placa']);
+                        
+                            // Consultar la base de datos para obtener la información del vehículo
+                            $sql = "SELECT Id_Vehiculo FROM vehiculo WHERE Placa = ?";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param("s", $placa); // "s" indica string
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                        
                             if ($result->num_rows > 0) {
-                                // Si se encuentra un usuario, mostrar la información
+                                // Obtener el ID del vehículo
                                 $row = $result->fetch_assoc();
-
-
-                                echo "<p><strong>Nombre Completo: </strong>" . $row['Nombre'] . "</p>";
-                                echo "<p><strong>Apellidos Completos:</strong> " . $row['Apellidos'] . "</p>";
-                                echo "<p><strong>Tipo de Documento:</strong> " . $row['Tipo_Documento'] . "</p>";
-                                echo "<p><strong>Número de Identidad:</strong> " . $row['Numero_Identidad'] . "</p>";
-                                echo "<p><strong>Fecha de Nacimiento:</strong> " . $row['Fecha_Nacimiento'] . "</p>";
-                                echo "<p><strong>Número de Teléfono:</strong> " . $row['Telefono'] . "</p>";
-                                echo "<p><strong>Correo Electrónico:</strong> " . $row['Correo'] . "</p>";
-
+                                $idplaca = $row['Id_Vehiculo'];
+                        
+                                // Obtener la aseguradora del vehículo
+                                $sql = "SELECT Id_Aseguradora, Id_Poliza FROM segurovehiculo WHERE Id_Vehiculo = ?";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->bind_param("i", $idplaca);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                        
+                                if ($result->num_rows > 0) {
+                                    $rowSeguro = $result->fetch_assoc();
+                                    $idAseg = $rowSeguro['Id_Aseguradora'];
+                                    $idpol = $rowSeguro['Id_Poliza'];
+                        
+                                    // Obtener datos de la aseguradora
+                                    $sql = "SELECT Nombre_Aseguradora, TelefonoEmergencia FROM aseguradoras WHERE Id_Aseguradora = ?";
+                                    $stmt = $conn->prepare($sql);
+                                    $stmt->bind_param("i", $idAseg);
+                                    $stmt->execute();
+                                    $result = $stmt->get_result();
+                                    $nomAseg = $telefonoEmergencia = "";
+                        
+                                    if ($result->num_rows > 0) {
+                                        $rowAseg = $result->fetch_assoc();
+                                        $nomAseg = $rowAseg['Nombre_Aseguradora'];
+                                        $telefonoEmergencia = $rowAseg['TelefonoEmergencia'];
+                                    }
+                        
+                                    // Obtener datos de la póliza
+                                    $sql = "SELECT Numero_Poliza, Fecha_Final FROM Poliza WHERE Id_Poliza = ?";
+                                    $stmt = $conn->prepare($sql);
+                                    $stmt->bind_param("i", $idpol);
+                                    $stmt->execute();
+                                    $result = $stmt->get_result();
+                                    $numpol = $FechaFinal = "";
+                        
+                                    if ($result->num_rows > 0) {
+                                        $rowPoliza = $result->fetch_assoc();
+                                        $numpol = $rowPoliza['Numero_Poliza'];
+                                        $FechaFinal = $rowPoliza['Fecha_Final'];
+                                    }
+                        
+                                    // Mostrar los resultados
+                                    echo "<p><strong>Placa:</strong> " . htmlspecialchars($placa) . "</p>";
+                                    echo "<p><strong>Aseguradora:</strong> " . htmlspecialchars($nomAseg) . "</p>";
+                                    echo "<p><strong>Teléfono Emergencia:</strong> " . htmlspecialchars($telefonoEmergencia) . "</p>";
+                                    echo "<p><strong>Número de Póliza:</strong> " . htmlspecialchars($numpol) . "</p>";
+                                    echo "<p><strong>Fecha de Vencimiento:</strong> " . htmlspecialchars($FechaFinal) . "</p>";
+                                } else {
+                                    echo "<h2><strong>No se encontró información de seguro para esta placa</strong></h2>";
+                                }
                             } else {
-                                // Si no se encuentra el usuario, mostrar un mensaje
-                                echo "<h2><strong>No se encontró ningún usuario con ese número de identidad</h2>";
+                                echo "<h2><strong>No se encontró PLACA</strong></h2>";
 
-
-
+                                
                             }
-
+                        
                             // Cerrar la conexión a la base de datos
+                            $stmt->close();
                             $conn->close();
                         }
-                        ?>
+                        
+                        
+                        ?>    <br><br>
+ <!-- Formulario de búsqueda  -->
+ <form action="buscarTransporte.html" method="POST">
+       
+        <button type="submit" class="boton" role="button">Nueva Conosulta</button> <br><br>
+    </form>
 
-
-                        <br><br>
-                        <div><a href="modelo/modificarUser.php" class="boton" role="button">Modificar</a>
-                        </div>
-                        <br><br>
-                        <div><a href="registrarSeg.html" type="submit" class="boton" role="button">Registro Seguros</a>
-                        </div>
+                    
+                       
+                    
 
                         <br><br>
                         <br><br>

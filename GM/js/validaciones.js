@@ -1,4 +1,25 @@
+function cargarCiudades(departamentoId) {
+    console.log(departamentoId);  // Esto te ayudará a verificar si el ID del departamento está siendo recibido
+    var ciudadSelect = document.getElementById("Ciudad");
+    ciudadSelect.innerHTML = '<option selected disabled>Seleccione</option>'; // Limpiar opciones anteriores
 
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/GitHub/GM/modelo/ciudades.php?departamento_id=' + departamentoId, true);
+    xhr.onload = function () {
+        if (xhr.status == 200) {
+            var Ciudad = JSON.parse(xhr.responseText);
+            Ciudad.forEach(function (ciudad) {
+                var option = document.createElement('option');
+                option.value = ciudad.Id_ciudad;
+                option.textContent = ciudad.Nombre;
+                ciudadSelect.appendChild(option);
+            });
+        } else {
+            console.error('Error al cargar ciudades:', xhr.status);
+        }
+    };
+    xhr.send();
+}
 
 
 function validarFormulario() {
@@ -61,5 +82,3 @@ document.querySelector('form').addEventListener('submit', function(event) {
         event.preventDefault();
     }
 });
-
-

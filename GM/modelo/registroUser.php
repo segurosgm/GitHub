@@ -35,7 +35,7 @@
 
             // Crear una nueva solicitud AJAX para obtener las ciudades basadas en el departamento
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'ciudades.php?departamento_id=' + departamentoId, true);
+            xhr.open('GET', '/GitHub/GM/modelo/ciudades.php?departamento_id=' + departamentoId, true);
             xhr.onload = function () {
                 if (xhr.status == 200) {
                     var ciudades = JSON.parse(xhr.responseText);

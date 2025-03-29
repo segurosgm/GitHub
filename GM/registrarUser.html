@@ -24,8 +24,6 @@
     <!-- JQuary  calendario -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js"></script>
-
-
     <script src="/js/validaciones.js"></script> <!-- Script para validación del formulario -->
     <script>
         // Función para cargar las ciudades dependiendo del departamento
@@ -35,11 +33,11 @@
 
             // Crear una nueva solicitud AJAX para obtener las ciudades basadas en el departamento
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', '/gm/modelo/ciudades.php?departamento_id=' + departamentoId, true);
+            xhr.open('GET', '/GitHub/GM/modelo/ciudades.php?departamento_id=' + departamentoId, true);
             xhr.onload = function () {
                 if (xhr.status == 200) {
-                    var ciudades = JSON.parse(xhr.responseText);
-                    ciudades.forEach(function (ciudad) {
+                    var Ciudad = JSON.parse(xhr.responseText);
+                    Ciudad.forEach(function (ciudad) {
                         var option = document.createElement('option');
                         option.value = ciudad.Id_ciudad;
                         option.textContent = ciudad.Nombre;
@@ -83,7 +81,7 @@
                                     Consultar Seguros
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="transporte.html">Transporte</a></li>
+                                    <li><a class="dropdown-item" href="buscarTransporte.html">Transporte</a></li>
                                     <li><a class="dropdown-item" href="vida.html">Vida</a></li>
 
                                 </ul>

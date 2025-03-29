@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <base href="/GM/">
+    <base href="/Github/GM/">
 
 </head>
 
@@ -35,7 +35,7 @@
     <header class="container justify-between">
         <center>
             <div class="container flex justify-between">
-                <img class="img-fluid" src="img/logo2.jpg" alt="logo GMK Seguros Especialistas en Riesgos y 
+                <img class="img-fluid" src="/Github/GM/img/logo2.jpg" alt="logo GMK Seguros Especialistas en Riesgos y 
                 Seguros">
                 <!-- class="img-fluid" es el responsive desde boostrap -->
             </div>
@@ -112,18 +112,11 @@
             text: "Bienvenido",
             confirmButtonText: "Aceptar"
         }).then(() => {
-            window.location.href = "/GM/Home.html"; 
+            window.location.href = "Home.html"; 
         });
-    </script>';
-                    // Redirige a la página HTML después de mostrar el mensaje
-                    //header("Location:/GM/Home.html");
-        
+    </script>';    
                 } else {
-
-                    // echo '<script language="javascript">window.alert("Contraseña incorrecta.");</script>';
-                    //echo '("Contraseña incorrecta.")';
-        
-                    // Mensaje en caso de que la contraseña sea incorrecta 
+ // Mensaje en caso de que la contraseña sea incorrecta 
                     echo '
         <script>
             Swal.fire({
@@ -166,8 +159,7 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- Alertas  <script src="js/function.js"></script>  -->
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 
 </body>

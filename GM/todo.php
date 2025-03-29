@@ -1,18 +1,7 @@
 <?php
 // Conexión a la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "GMK"; // Aquí deberías colocar el nombre de tu base de datos
+include('modelo/conexion.php');
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-
-
-// Verificar si la conexión fue exitosa
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Recibir los datos del formulario

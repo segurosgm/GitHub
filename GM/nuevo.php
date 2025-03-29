@@ -1,120 +1,3 @@
-<?php
-// Conexión a la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "GMK"; // Nombre de la base de datos
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Verificar si la conexión fue exitosa
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Recibir los datos del formulario
-    $nombreAseguradora = $_POST['Nombre_Aseguradora'];
-    $nombre = $_POST['nombre'];
-    $apellidos = $_POST['apellidos'];
-    $tipoDocumento = $_POST['tipo_documento'];
-    $numeroIdentidad = $_POST['numero_identidad'];
-    $poliza = $_POST['num_poliza'];
-    $fechaVencimiento = $_POST['fecha_vencimiento'];  
-    $tipoPoliza = $_POST['tipoPoliza'];
-    $tipoVehiculo = isset($_POST['tipoVehiculo']) ? $_POST['tipoVehiculo'] : null;
-    $placa = isset($_POST['placa']) ? $_POST['placa'] : null;
-    $marca = isset($_POST['marca']) ? $_POST['marca'] : null;
-
-    // Verificar la aseguradora 
-    $stmt = $conn->prepare("SELECT Id_Aseguradora FROM aseguradoras WHERE Nombre_Aseguradora = ?");
-    $stmt->bind_param("s", $nombreAseguradora);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        $rowAseguradora = $result->fetch_assoc();
-        $idAseguradora = $rowAseguradora['Id_Aseguradora'];
-    }
-
-    // Verificar la tiposeguro
-    $stmt = $conn->prepare("SELECT Id_tipoPoliza FROM tipopoliza WHERE NombrePoliza = ?");
-    $stmt->bind_param("s", $tipoPoliza);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        $rowTipoPoliza = $result->fetch_assoc();
-        $idtipoPoliza = $rowTipoPoliza['Id_tipoPoliza'];
-    }
-
-
-    // Verificar si el usuario ya existe en la tabla usuario
-$stmt = $conn->prepare("SELECT Id FROM usuarios WHERE Numero_Identidad = ?");
-$stmt->bind_param("s", $numeroIdentidad);
-$stmt->execute();
-$result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        // Si el usuario ya existe, obtener su ID
-        $rowUsuario = $result->fetch_assoc();
-        $idUsuario = $rowUsuario['Id'];
-    } else {
-        // Si el usuario no existe, insertar en la tabla usuario
-        $stmt = $conn->prepare("INSERT INTO usuario (Numero_Identidad, Nombre, Apellidos, Tipo_Documento) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("ssss", $numeroIdentidad, $nombre, $apellidos, $tipoDocumento);
-        $stmt->execute();
-        $idUsuario = $stmt->insert_id;
-    }
-
-
-    // Insertar en la tabla poliza
-    $stmt = $conn->prepare("INSERT INTO poliza (Numero_Poliza, Id_tipoPoliza, Id_Aseguradora, Fecha_Inicio, Fecha_Final) VALUES (?, ?, ?, NOW(), ?)");
-    $stmt->bind_param("siis", $poliza, $idtipoPoliza, $idAseguradora, $fechaVencimiento);
-    $stmt->execute();
-    $idPoliza = $stmt->insert_id;
-
-    // Lógica para seguro de transporte
-    if ($tipoPoliza == "Transporte") {
-        // Insertar en la tabla vehiculo
-        $stmt = $conn->prepare("INSERT INTO vehiculo (Placa, TipoVehiculo, Marca) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $placa, $tipoVehiculo, $marca);
-        $stmt->execute();
-        $idVehiculo = $stmt->insert_id;
-
-        // Insertar en la tabla segurovehiculo
-        $stmt = $conn->prepare("INSERT INTO segurovehiculo (Id_Aseguradora, Id_Vehiculo, Id_Poliza, Estado) VALUES (?, ?, ?, 'Activo')");
-        $stmt->bind_param("iii", $idAseguradora, $idVehiculo, $idPoliza);
-        $stmt->execute();
-    }
-
-    // Lógica para seguro de vida
-    if ($tipoPoliza == "Vida") {
-        // Insertar en la tabla segurovida
-        $stmt = $conn->prepare("INSERT INTO segurovida (Id_Aseguradora, Id_Usuario, Id_Poliza, Estado) VALUES (?, ?, ?, 'Activo')");
-        $stmt->bind_param("iii", $idAseguradora, $idUsuario, $idPoliza);
-        $stmt->execute();
-    }
-
-    // Mensaje de éxito
-    echo "
-    <script>
-        Swal.fire({
-            icon: "success",
-            title: "Seguro Registrado Exitosamente",
-            text: "",
-            confirmButtonText: "Aceptar"
-        }).then(() => {
-            window.location.href = "/GM/nosotros.html"; // Redirige a la página de bienvenida
-        });
-    </script>";
-   
-}
-
-
-
-
-$conn->close();
-?>
-
 
 <!DOCTYPE html>
 <html lang="es">
@@ -123,14 +6,29 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro Seguros</title>
     <link rel="stylesheet" href="css/styles.css" type="text/css">
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+     <!-- Boostrap -->
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <!-- JQuery -->
+    <script src="jquery-ui-1.14.0.custom/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
-    <script src="js/script.js"></script>
+   <!-- Alertas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="js/validaciones.js"></script>
+ 
+  
+
+
+
+
 </head>
 <body>
     <header class="container-fluid">
@@ -243,7 +141,7 @@ $conn->close();
                                     <option value="" disabled selected>Seleccionar</option>
                                     <option value="Transporte">Transporte</option>
                                     <option value="Vida">Vida</option>
-                                </select><br>
+                                </select><br><br>
                                 <div id="TipoVehiculo" style="display: none;">
                                     <label for="tipoVehiculo">Tipo de vehículo:</label>
                                     <input type="text" id="tipoVehiculo" name="tipoVehiculo">
@@ -305,3 +203,122 @@ $conn->close();
     </script>
 </body>
 </html>
+
+<?php
+// Conexión a la base de datos
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "GMK"; // Nombre de la base de datos
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Verificar si la conexión fue exitosa
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Recibir los datos del formulario
+    $nombreAseguradora = $_POST['Nombre_Aseguradora'];
+    $nombre = $_POST['nombre'];
+    $apellidos = $_POST['apellidos'];
+    $tipoDocumento = $_POST['tipo_documento'];
+    $numeroIdentidad = $_POST['numero_identidad'];
+    $poliza = $_POST['num_poliza'];
+    $fechaVencimiento = $_POST['fecha_vencimiento'];  
+    $tipoPoliza = $_POST['tipoPoliza'];
+    $tipoVehiculo = isset($_POST['tipoVehiculo']) ? $_POST['tipoVehiculo'] : null;
+    $placa = isset($_POST['placa']) ? $_POST['placa'] : null;
+    $marca = isset($_POST['marca']) ? $_POST['marca'] : null;
+
+    // Verificar la aseguradora 
+    $stmt = $conn->prepare("SELECT Id_Aseguradora FROM aseguradoras WHERE Nombre_Aseguradora = ?");
+    $stmt->bind_param("s", $nombreAseguradora);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $rowAseguradora = $result->fetch_assoc();
+        $idAseguradora = $rowAseguradora['Id_Aseguradora'];
+    }
+
+    // Verificar la tiposeguro
+    $stmt = $conn->prepare("SELECT Id_tipoPoliza FROM tipopoliza WHERE NombrePoliza = ?");
+    $stmt->bind_param("s", $tipoPoliza);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $rowTipoPoliza = $result->fetch_assoc();
+        $idtipoPoliza = $rowTipoPoliza['Id_tipoPoliza'];
+    }
+
+
+    // Verificar si el usuario ya existe en la tabla usuario
+$stmt = $conn->prepare("SELECT Id FROM usuarios WHERE Numero_Identidad = ?");
+$stmt->bind_param("s", $numeroIdentidad);
+$stmt->execute();
+$result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // Si el usuario ya existe, obtener su ID
+        $rowUsuario = $result->fetch_assoc();
+        $idUsuario = $rowUsuario['Id'];
+    } else {
+        // Si el usuario no existe, insertar en la tabla usuario
+        $stmt = $conn->prepare("INSERT INTO usuarios (Numero_Identidad, Nombre, Apellidos, Tipo_Documento) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $numeroIdentidad, $nombre, $apellidos, $tipoDocumento);
+        $stmt->execute();
+        $idUsuario = $stmt->insert_id;
+    }
+
+
+    // Insertar en la tabla poliza
+    $stmt = $conn->prepare("INSERT INTO poliza (Numero_Poliza, Id_tipoPoliza, Id_Aseguradora, Fecha_Inicio, Fecha_Final) VALUES (?, ?, ?, NOW(), ?)");
+    $stmt->bind_param("siis", $poliza, $idtipoPoliza, $idAseguradora, $fechaVencimiento);
+    
+    $stmt->execute();
+    $idPoliza = $stmt->insert_id;
+
+    // Lógica para seguro de transporte
+    if ($tipoPoliza == "Transporte") {
+        // Insertar en la tabla vehiculo
+        $stmt = $conn->prepare("INSERT INTO vehiculo (Placa, TipoVehiculo, Marca) VALUES (?, ?, ?)");
+        $stmt->bind_param("sss", $placa, $tipoVehiculo, $marca);
+        $stmt->execute();
+        $idVehiculo = $stmt->insert_id;
+
+        // Insertar en la tabla segurovehiculo
+        $stmt = $conn->prepare("INSERT INTO segurovehiculo (Id_Aseguradora, Id_Vehiculo, Id_Poliza, Estado) VALUES (?, ?, ?, 'Activo')");
+        $stmt->bind_param("iii", $idAseguradora, $idVehiculo, $idPoliza);
+        $stmt->execute();
+    }
+
+    // Lógica para seguro de vida
+    if ($tipoPoliza == "Vida") {
+        // Insertar en la tabla segurovida
+        $stmt = $conn->prepare("INSERT INTO segurovida (Id_Aseguradora, Id_Usuario, Id_Poliza, Estado) VALUES (?, ?, ?, 'Activo')");
+        $stmt->bind_param("iii", $idAseguradora, $idUsuario, $idPoliza);
+        $stmt->execute();
+    }
+
+    // Mensaje de éxito
+    echo '
+    <script>
+        Swal.fire({
+            icon: "success",
+            title: "Seguro Registrado Exitosamente",
+            text: "",
+            confirmButtonText: "Aceptar"
+        }).then(() => {
+            window.location.href = "/GM/nosotros.html"; // Redirige a la página de bienvenida
+        });
+    </script>';
+   
+}
+
+
+
+
+$conn->close();
+?>
+
