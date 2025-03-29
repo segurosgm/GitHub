@@ -22,7 +22,10 @@
     <!-- JQuary  calendario -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js"></script>
+    <!-- Raiz del Proyecto -->
     <base href="/Github/GM/">
+    <!-- Alertas -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 
@@ -56,7 +59,7 @@
                                     Consultar Seguros
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="transporte.html">Transporte</a></li>
+                                    <li><a class="dropdown-item" href="buscarTransporte.html">Transporte</a></li>
                                     <li><a class="dropdown-item" href="vida.html">Vida</a></li>
                                 </ul>
                             </li>
@@ -117,10 +120,19 @@
 
                             } else {
                                 // Si no se encuentra el usuario, mostrar un mensaje
-                                echo "<h2><strong>No se encontró ningún usuario con ese número de identidad</h2>";
+                                echo '  <script>
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Oops...",
+                                    text: "No se encontró ningún usuario con ese número de identidad",
+                                    confirmButtonText: "Aceptar"
+                                    }).then(() => {
+                                        window.location.href = "cuenta.html"; 
+                                   
+                                     });
+                                </script>';
 
-
-
+                                
                             }
 
                             // Cerrar la conexión a la base de datos

@@ -1,16 +1,6 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "gmk";
-
-// Crear conexión
-$conn = new mysqli(hostname: $servername, username: $username, password: $password, database: $dbname);
-
-// Comprobar conexión
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
-}
+// conexión a la base de datos
+include('conexion.php');
 
 $usuario = null;
 $error = null;
@@ -128,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Numero_Identidad'])) 
                                     Consultar Seguros
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="../transporte.html">Transporte</a></li>
+                                    <li><a class="dropdown-item" href="../buscarTransporte.html">Transporte</a></li>
                                     <li><a class="dropdown-item" href="../vida.html">Vida</a></li>
                                 </ul>
                             </li>
@@ -138,8 +128,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Numero_Identidad'])) 
                                     Conctacto
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="../nosotros.html">Acerca de Nosotros</a></li>
-                                    <li><a class="dropdown-item" href="../servicios.html">Servicios</a></li>
+                                    <li><a class="dropdown-item" href="/nosotros.html">Acerca de Nosotros</a></li>
+                                    <li><a class="dropdown-item" href="/servicios.html">Servicios</a></li>
                                     <li><a class="dropdown-item" href="../aliados.html">Aliados</a></li>
                                     <li><a class="dropdown-item" href="../correo.html">Contactanos</a></li>
                                 </ul>

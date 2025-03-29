@@ -210,18 +210,8 @@
 </html>
 
 <?php
-// Conexión a la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "GMK"; // Nombre de la base de datos
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Verificar si la conexión fue exitosa
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// conexión a la base de datos
+include('conexion.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Recibir los datos del formulario

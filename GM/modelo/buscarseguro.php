@@ -22,8 +22,8 @@
     <!-- JQuary  calendario -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js"></script>
-         <!-- Raiz del Proyecto -->
-         <base href="/Github/GM/">
+       <!-- Raiz del Proyecto -->
+       <base href="/Github/GM/">
     <!-- Alertas -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -84,7 +84,7 @@
             <center>
                 <section class="container flex justify-between">
                     <h2>
-                        Información Seguro del Vehiculo 
+                        Información del Seguro de Vida 
                     </h2>
                     <br>
                     <section class=" flex justify-between border border-dark ">
@@ -96,11 +96,13 @@
                        
                  
                         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                            // Obtener la placa desde el formulario
-                            $placa = $conn->real_escape_string($_POST['Placa']);
+                            // Obtener el nombre del formulario
+                            $nombre = $conn->real_escape_string($_POST['Nombre']);
+                            $apellidos = $conn->real_escape_string($_POST['Apellidos']);
                         
+
                             // Consultar la base de datos para obtener la información del vehículo
-                            $sql = "SELECT Id_Vehiculo FROM vehiculo WHERE Placa = ?";
+                            $sql = "SELECT Id FROM usuarios WHERE nombre = ?";
                             $stmt = $conn->prepare($sql);
                             $stmt->bind_param("s", $placa); // "s" indica string
                             $stmt->execute();
@@ -161,20 +163,22 @@
                                     echo "<h2><strong>No se encontró información de seguro para esta placa</strong></h2>";
                                 }
                             } else {
-                                
+                            
 
-                                   // Si no se encuentra el usuario, mostrar un mensaje
-                                   echo '  <script>
-                                   Swal.fire({
-                                       icon: "error",
-                                       title: "Oops...",
-                                       text: "No se encontró PLACA",
-                                       confirmButtonText: "Aceptar"
-                                       }).then(() => {
-                                           window.location.href = "/GM/cuenta.html"; 
-                                      
-                                        });
-                                   </script>';
+                                 // Si no se encuentra el usuario, mostrar un mensaje
+                                 echo '  <script>
+                                 Swal.fire({
+                                     icon: "error",
+                                     title: "Oops...",
+                                     text: "No se encontró PLACA",
+                                     confirmButtonText: "Aceptar"
+                                     }).then(() => {
+                                         window.location.href = "/GM/cuenta.html"; 
+                                    
+                                      });
+                                 </script>';
+ 
+                                 
                             }
                         
                             // Cerrar la conexión a la base de datos
